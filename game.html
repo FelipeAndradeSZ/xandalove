@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Autism 💖</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffe0f0, #ffd6e8);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;  /* Ajuste para garantir que o conteúdo comece no topo */
+      overflow-y: auto;  /* Permite o scroll se o conteúdo for maior que a tela */
+    }
+    #container {
+      width: 92vw;
+      max-width: 420px;
+      background: #fff0f6;
+      border-radius: 25px;
+      padding: 16px;
+      box-shadow: 0 0 25px rgba(255, 64, 129, 0.3);
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;  /* Certifique-se de que o conteúdo se alinha ao topo */
+      min-height: auto;  /* Permite que a altura do contêiner seja dinâmica */
+      max-height: 90vh;  /* Limita a altura máxima, mas ainda permite rolagem interna */
+      overflow-y: auto;  /* Permite rolagem interna se o conteúdo for maior que o contêiner */
+    }
+    #character {
+      width: 180px;
+      animation: float 3s ease-in-out infinite;
+      cursor: pointer;
+      margin: 0 auto;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    #dialog {
+      margin-top: 16px;
+      background: #fff;
+      border: 2px solid #ff99c8;
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 16px;
+      color: #d81b60;
+      min-height: 120px;
+      white-space: pre-line;
+      box-shadow: 0 4px 10px rgba(255, 0, 120, 0.1);
+      position: relative;
+    }
+    #typing {
+      font-style: italic;
+      color: #c2185b;
+      font-size: 14px;
+      margin-top: 8px;
+      min-height: 24px;
+    }
+    .falling-heart {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-image: url('hearth.png');
+      background-size: cover;
+      animation: fall 3s linear forwards;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px); opacity: 1; }
+      100% { transform: translateY(600px); opacity: 0; }
+    }
+    .back-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      background-color: #ff69b4;
+      color: white;
+      font-size: 16px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      box-shadow: 0 3px 10px rgba(255, 105, 180, 0.4);
+    }
+    .back-btn:hover {
+      background-color: #ff4081;
+    }
+    @media (max-width: 420px) {
+      #character { width: 140px; }
+      #dialog { font-size: 14px; padding: 16px; }
+      .back-btn { font-size: 14px; padding: 10px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div>
+      <img id="character" src="chibi-lucu-unscreen.gif" alt="Okta Lucu" />
+      <div id="dialog">Clica na bichinha pra começar 💌</div>
+      <div id="typing"></div>
+    </div>
+    <a href="backup.html"><button class="back-btn">🔙 De volta ao inicio</button></a>
+  </div>
+
+  <!-- Audio pantun -->
+  <audio id="audio0" src="calm.mp3" preload="auto" loop></audio>
+
+
+  <script>
+    const dialog = document.getElementById("dialog");
+    const typing = document.getElementById("typing");
+    const character = document.getElementById("character");
+
+    const audios = [
+      document.getElementById("audio0"),
+
+    ];
+
+    const pantuns = [
+      { setup: "LEIA APENAS QUANDO ESTIVER CURADA E SOUBER O QUE ESTA A SENTIR POR MIM", punchline: "SE QUISER VER ANTES TUDO BEM TAMBEM, MAS ACHO QUE SÓ FARÁ ALGUM SENTIDO QUANDO ESTIVER CURADA", response: " OK OK, JA JA VC VERÁ O TEXTINHO" },
+      { setup: "ESPERO QUE REALMENTE ESTEJA CURADA E BEM", punchline: "MAS SE VEIO A LER PELA CURIOSIDADE ANTES DO MOMENTO, SÓ ESTEJA PREPARADA", response: "REALMENTE IRÁ CONTER MUITAS PALAVRAS EMOCIONAIS" },
+      { setup: "TA BOM ENTÃO, ACHO QUE SE JA CHEGOU ATÉ AQUI É PQ REALMENTE QUER LER", punchline: "O PROXIMO JA VAI SER O TEXTO, ENTÃO LEIA COM CUIDADO E CARINHO", response: "❤️" },
+      { setup: "Bom, se esta a ler isso provavelmente ja sabe o que esta a sentir e felizmente esta curada, pode ter a certeza de que estou muito feliz por vc e com isso quero me abrir de coração a voce, estou a escrever isso dia 4/10 e tudo que estará aqui eu sinto desde antes desta data, bom, vc realmente me fez sentir sentimentos de amor, muitos que parecem que nunca senti, voce me trouxe paz, conforto e muitas outras coisas, amo cada detalhe seu do fundo do meu coração e pode ter certeza que vc tem um lugar nele para sempre, não sei como te agradecer por tudo, mas independente da sua decisão de querer ou não tentar termos algo, estarei aqui da forma que for, como algo sério como namorado ou como amigo, vc é muito forte e me inspirou diariamente a me tornar mais forte tambem, que hoje e para todo sempre, vc continue feliz e a brilhar, nao deixe jamais alguem tirar seu brilho novamente, vc não merece o mundo porque o mundo é imperfeito e cheio de maldades, vc merece algo maior que isso, vc merece ter paz, alegria e muito sucesso, que nessa sua nova fase, tudo de certo e vc continue vencendo cada dia mais e conquistando tudo aquilo que sonha, obrigado por cada momento e sentimento que me fez sentir, espero do fundo do meu coração que se existir algum resquicio de chances de eu continuar a tentar te conquistar, eu tentarei, mas se n der, tudo bem, serei sempre grato por ter vc em minha vida, será um prazer ver sua evolução ao longo dos anos, confesso que quando nos conhecemos eu ainda estava meio mal, mas sua energia positiva mesmo na bagunça que estava dentro de vc, me trouxe felicidades e sentimentos incriveis, obrigado por tudo ok, aproveite esse seu novo ciclo da forma mais incrivel que puder, procure pessoas boas para estarem ao seu lado, pois é isso que vc merece ta bom, mas caso algum dia venha a sentir coisas ruins novamente, saiba que jamais estará sozinha, pois eu estarei aqui novamente para lhe ajudar no que for, fica em paz pitchuca, o dia 03/10 será sempre lembrado por mim, confesso que me segurei muito para não declarar tudo que sentia por vc naquele momento, pois sabia que só ia piorar a situação de tudo, mas quando vc me deu um beijo eu realmente me senti vivo, feliz, meu coração disparou, minha cabeça tonteou e tudo isso de forma boa, no momento só consegui olhar aos ceus e agradecer a deus por aquilo, independente do que fosse acontecer no futuro, saiba que NUNCA senti e sentirei algo ruim por vc, seja qual for nosso destino, vc terá sempre o meu amor, assim como meus pais, minha irma e afins, vc conseguiu me trazer uma importancia tão grande em minha vida quanto meus familiares e por isso acho que tudo foi tão intenso dentro de mim durante esse periodo, mas é isso, VIVA, SEJA FELIZ E JAMAIS DEIXE OUTRO ALGUEM TE MACHUCAR NOVAMENTE!", punchline: "", response: "Te amarei para todo sempre" },
+    ];
+
+    let current = 0;
+
+    function stopAllAudio() {
+      audios.forEach(a => {
+        a.pause();
+        a.currentTime = 0;
+      });
+    }
+
+    function showFallingHearts() {
+      for (let i = 0; i < 10; i++) {
+        const heart = document.createElement("div");
+        heart.className = "falling-heart";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = 2 + Math.random() * 2 + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+      }
+    }
+
+    function tampilDialog() {
+  const g = pantuns[current];
+  dialog.textContent = g.setup;
+  typing.textContent = "hmmm...";
+
+  // Sempre tocar o único áudio disponível
+  audios[0].play();  // Usando apenas o primeiro áudio
+  
+
+  showFallingHearts();
+
+  setTimeout(() => {
+    dialog.textContent = `${g.setup}\n\n${g.punchline}`;
+    typing.textContent = "👉 " + g.response;
+    current++;
+
+    // Resetar o índice para começar do zero após o último pantun
+    if (current >= pantuns.length) current = 0;
+  }, 1800);
+}
+
+    character.addEventListener("click", tampilDialog);
+  </script>
+</body>
+</html>
