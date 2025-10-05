@@ -26,9 +26,7 @@
 
     .plant {
       position: absolute; cursor: pointer; transition: transform .2s ease;
-      z-index: 4; transform-origin: bottom center;
-      animation: popin .25s ease-out;
-      user-select: none;
+      z-index: 4; transform-origin: bottom center; animation: popin .25s ease-out; user-select: none;
     }
     @keyframes popin { 0%{transform:scale(0); opacity:0;} 100%{transform:scale(1); opacity:1;} }
     .plant:hover { transform: scale(1.06); }
@@ -74,16 +72,18 @@
     .status-disconnected { background:#ff6b6b; color:white; }
     .status-loading { background:#FFA500; color:white; }
 
+    /* Botão Voltar */
+    .back-btn {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; background:#ff69b4; color:white; border:none; border-radius:20px;
+      font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(255,105,180,.4);
+      z-index: 101; transition: all .25s ease;
+    }
+    .back-btn:hover { background:#ff4081; transform: translateX(-50%) scale(1.05); }
+
     /* Efeito da gotinha */
-    .drop {
-      position: absolute; font-size: 18px; pointer-events: none; z-index: 5;
-      animation: drop-anim .7s ease-out forwards;
-    }
-    @keyframes drop-anim {
-      0% { transform: translateY(-10px); opacity: 0; }
-      20% { opacity: 1; }
-      100% { transform: translateY(-35px); opacity: 0; }
-    }
+    .drop { position: absolute; font-size: 18px; pointer-events: none; z-index: 5; animation: drop-anim .7s ease-out forwards; }
+    @keyframes drop-anim { 0%{transform: translateY(-10px); opacity:0;} 20%{opacity:1;} 100%{transform: translateY(-35px); opacity:0;} }
   </style>
 </head>
 <body>
@@ -114,6 +114,9 @@
     <button class="reset-btn" onclick="resetAll()">Zerar Tudo</button>
   </div>
 
+  <!-- NOVO: botão voltar -->
+  <button class="back-btn" onclick="goBack()">🔙 Voltar</button>
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -139,7 +142,7 @@
     let selectedFlower = '🌸';
     let wateringMode = false;
 
-    // cada item de 'plants' = { id, x, y, size, type, stage: 'sprout'|'flower', water, waterNeeded }
+    // cada item = { id, x, y, size, type, stage, water, waterNeeded }
     let plants = [];
     let stats = { totalAdded: 0, totalRemoved: 0 };
     let isLoading = true;
@@ -214,7 +217,7 @@
       const item = {
         id: Date.now().toString() + '-' + Math.random().toString(36).slice(2),
         x, y, size,
-        type: selectedFlower,     // flor que ele vai virar
+        type: selectedFlower,
         stage: 'sprout',
         water: 0,
         waterNeeded: 3
@@ -242,7 +245,6 @@
       p.water++;
       if (p.water >= p.waterNeeded && p.stage === 'sprout') {
         p.stage = 'flower';
-        // troca visual no DOM
         const el = document.querySelector(`[data-id="${p.id}"]`);
         if (el) {
           el.textContent = p.type;
@@ -287,7 +289,6 @@
         if (p.stage === 'sprout' && wateringMode) {
           waterPlant(p.id);
         } else if (!wateringMode) {
-          // se não estiver com regador, clique remove
           removePlant(p.id);
         }
       };
@@ -295,6 +296,7 @@
       document.body.appendChild(el);
     }
 
+    // Limpa só as plantas (mantém estatísticas)
     function clearGarden() {
       if (confirm('Limpar o jardim (manter estatísticas)?')) {
         if (isFirebaseReady) database.ref('garden/plants').remove();
@@ -305,12 +307,11 @@
       }
     }
 
+    // Zera tudo (plantas + estatísticas + cookie)
     function resetAll() {
       if (!confirm('Zerar TUDO? Isso apaga brotos/flores e estatísticas.')) return;
-
       plants = [];
       stats = { totalAdded: 0, totalRemoved: 0 };
-
       document.querySelectorAll('.plant').forEach(f => f.remove());
 
       if (isFirebaseReady) {
@@ -323,6 +324,22 @@
       saveToCookie();
       updateStats();
     }
+
+    // ---- Voltar ----
+    function goBack() {
+      // tente ir para a página principal do seu app
+      const target = 'backup.html';
+      fetch(target, { method: 'HEAD' })
+        .then(r => {
+          if (r.ok) window.location.href = target;
+          else history.back();
+        })
+        .catch(() => history.back());
+    }
+    // atalho: tecla ESC volta
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') goBack();
+    });
 
     // ---- Persistência ----
     function loadFromFirebase() {
@@ -354,22 +371,17 @@
         const data = snapshot.val();
         const newPlants = data ? Object.values(data) : [];
 
-        // remove os que sumiram
         document.querySelectorAll('.plant').forEach(el => {
           const id = el.dataset.id;
           if (!newPlants.find(f => f.id == id)) el.remove();
         });
-        // adiciona/atualiza
         newPlants.forEach(p => {
           const exists = document.querySelector(`[data-id="${p.id}"]`);
           if (!exists) renderPlant(p);
-          else {
-            // atualização (ex.: virou flor)
-            if (p.stage === 'flower') {
-              exists.textContent = p.type;
-              exists.classList.remove('sprout');
-              exists.classList.add('flower');
-            }
+          else if (p.stage === 'flower') {
+            exists.textContent = p.type;
+            exists.classList.remove('sprout');
+            exists.classList.add('flower');
           }
         });
 
@@ -408,7 +420,6 @@
       }
       return false;
     }
-
     function saveToCookie() {
       const data = { plants, stats };
       const expires = new Date(); expires.setFullYear(expires.getFullYear() + 1);
@@ -424,7 +435,6 @@
       plants.forEach(p => renderPlant(p));
       updateStats();
     }
-
     function updateStats() {
       document.getElementById('count').textContent   = plants.length;
       document.getElementById('added').textContent   = stats.totalAdded;
