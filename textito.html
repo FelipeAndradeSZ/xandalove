@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Textinho 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box;}
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to bottom, #ffd1dc, #ffe4e1);
+      overflow-x: hidden;
+      height: 100vh;
+      position: relative;
+    }
+    .container {
+      text-align: center;
+      padding: 60px 20px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #ff4d6d;
+    }
+    .btn {
+      background: #ff69b4;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: transform 0.3s ease;
+      user-select: none;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    .letter {
+      width: 300px;
+      margin: 30px auto;
+      cursor: pointer;
+      user-select: none;
+    }
+    .letter img {
+      width: 100%;
+      transition: transform 1s ease;
+      user-select: none;
+    }
+    .letter.open img {
+      transform: rotateX(180deg);
+    }
+    .content-box {
+      display: none;
+      background: white;
+      color: #333;
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      animation: fadeIn 1s forwards;
+      user-select: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pantun {
+      font-style: italic;
+      color: #ff5c8a;
+      margin-top: 15px;
+      user-select: text;
+    }
+
+    #horrorVideo {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 9999;
+      background: black;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #overlayScare {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 5em;
+      color: #ff0044;
+      text-shadow: 0 0 20px #ff0044;
+      z-index: 10000;
+      user-select: none;
+      pointer-events: none;
+      font-family: 'Fredoka', cursive;
+      animation: scarePulse 1.5s ease infinite alternate;
+    }
+    @keyframes scarePulse {
+      0% { text-shadow: 0 0 10px #ff0044; }
+      100% { text-shadow: 0 0 40px #ff0044; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="mainContainer">
+    <h1>💌</h1>
+
+    <div class="letter" id="letterDiv" onclick="openLetter()" aria-label="Buka surat cinta">
+      <img src="https://cdn-icons-png.flaticon.com/512/254/254638.png" alt="Surat Cinta" />
+    </div>
+
+    <div class="content-box" id="letterContent" role="region" aria-live="polite">
+      <p class="pantun"> oii, se estou a escrever isso estando mal saiba que vc realmente é alguem que eu tenho sentimento de amor verdadeiro, pq jamais eu teria capacidade de conseguir escrever algo para alguem que nao amo, mas bom, continue lutando, por mais que hoje tenha sido um dia ruim e negativo para vc, espero que amanhã possa ser um pouco melhor e a cada dia possa ir melhorando, saiba de coração que seus pais jamais querem que vc volte para o que te destruiu, quero poder alguma hora conversar com eles melhor, mas sei que são pessoas incriveis e que te amam muito, obrigado por cada sorriso que me tira, hoje é um dia que não estou nada bem no momento mas ainda sinto felicidades por sua causa, obrigado por ser essa pessoa incrivel, eu te amo ta, desculpa o texto ser menor e meio raso hoje, mas dei meu maximo</p>
+      
+    </div>
+
+    <button class="btn" onclick="playClickSound(); window.location.href = 'backup.html'" aria-label="Kembali ke awal">Clique no celular, aqui é pra voltar ksksks</button>
+  </div>
+
+  <!-- Video Jumpscare -->
+  <video id="horrorVideo" playsinline webkit-playsinline preload="auto" muted loop autoplay>
+    <source src="seremm.mp4" type="video/mp4" />
+    Browsermu tidak support video.
+  </video>
+
+  <!-- Audio -->
+  <audio id="clickSound" src="calm.mp3" preload="auto" loop></audio>
+  <audio id="flowerSound" src="kliklucuu.mp3" preload="auto"></audio>
+  <audio id="screamSound" src="seremm.mp3" preload="auto"></audio>
+
+  <div id="overlayScare">👻</div>
+
+  <script>
+    const clickSound = document.getElementById('clickSound');
+    const flowerSound = document.getElementById('flowerSound');
+    const screamSound = document.getElementById('screamSound');
+    clickSound.volume = 0.3;
+    const letterDiv = document.getElementById('letterDiv');
+    const letterContent = document.getElementById('letterContent');
+    const btnFlower = document.getElementById('btnFlower');
+    const horrorVideo = document.getElementById('horrorVideo');
+    const overlayScare = document.getElementById('overlayScare');
+    const mainContainer = document.getElementById('mainContainer');
+
+    let audioStarted = false;
+
+    function startClickSound() {
+      if (!audioStarted) {
+        clickSound.currentTime = 0;
+        clickSound.play().catch(e => {});
+        audioStarted = true;
+      } else {
+        clickSound.currentTime = 0;
+        clickSound.play().catch(e => {});
+      }
+    }
+
+    function stopClickSound() {
+      clickSound.pause();
+      clickSound.currentTime = 0;
+    }
+
+    function playClickSound() {
+      startClickSound();
+      if (window.navigator.vibrate) window.navigator.vibrate(50);
+    }
+
+    function playFlowerSound() {
+      stopClickSound();
+
+      flowerSound.pause();
+      flowerSound.currentTime = 0;
+      flowerSound.play().catch(e => {});
+      if (window.navigator.vibrate) window.navigator.vibrate(70);
+    }
+
+    function openLetter() {
+      playClickSound();
+      letterDiv.classList.add('open');
+      setTimeout(() => {
+        letterContent.style.display = 'block';
+      }, 1000);
+    }
+
+    let audioCtx, screamSource, gainNode;
+
+    btnFlower.addEventListener('click', async () => {
+      playFlowerSound();
+
+      mainContainer.style.pointerEvents = 'none';
+      letterContent.style.display = 'none';
+      letterDiv.style.display = 'none';
+      horrorVideo.style.display = 'block';
+      horrorVideo.currentTime = 0;
+
+      stopClickSound();
+
+      try {
+        if (horrorVideo.requestFullscreen) {
+          await horrorVideo.requestFullscreen();
+        } else if (horrorVideo.webkitRequestFullscreen) {
+          await horrorVideo.webkitRequestFullscreen();
+        } else if (horrorVideo.msRequestFullscreen) {
+          await horrorVideo.msRequestFullscreen();
+        }
+      } catch(err) {
+        console.warn("Fullscreen gagal:", err);
+      }
+
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        screamSource = audioCtx.createMediaElementSource(screamSound);
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 10;
+        screamSource.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+      }
+
+      screamSound.pause();
+      screamSound.currentTime = 0;
+
+      horrorVideo.play().catch(e => {});
+      screamSound.play().catch(e => {});
+
+      setTimeout(() => {
+        overlayScare.style.display = 'block';
+        setTimeout(() => {
+          overlayScare.style.display = 'none';
+        }, 4000);
+      }, 500);
+    });
+
+    document.addEventListener('click', () => {
+      if (!audioStarted) {
+        startClickSound();
+      }
+    }, { once: true });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && horrorVideo.style.display === 'block') {
+        setTimeout(() => {
+          horrorVideo.requestFullscreen().catch(() => {});
+        }, 300);
+      }
+    });
+
+    horrorVideo.addEventListener('ended', () => {
+      horrorVideo.currentTime = 0;
+      horrorVideo.play();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (document.fullscreenElement === horrorVideo) {
+        const forbiddenKeys = [' ', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'MediaPlayPause', 'MediaTrackNext', 'MediaTrackPrevious', 'F', 'f'];
+        if (forbiddenKeys.includes(e.key) || (e.shiftKey && (e.key === '.' || e.key === ','))) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    });
+
+    horrorVideo.addEventListener('contextmenu', (e) => {
+      if (document.fullscreenElement === horrorVideo) {
+        e.preventDefault();
+      }
+    });
+
+    
+
+  </script>
+</body>
+</html>
