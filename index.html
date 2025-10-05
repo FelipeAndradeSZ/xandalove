@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Textinho de hoje</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffe0f0, #ffd6ec);
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .phone {
+      width: 360px;
+      height: 640px;
+      background: white;
+      border: 16px solid #333;
+      border-radius: 36px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+      z-index: 20;
+    }
+    .phone-container {
+      position: relative;
+      z-index: 10;
+    }
+    .kitty-bow {
+      position: absolute;
+      top: -20px;
+      right: -10px;
+      width: 80px;
+      height: auto;
+      z-index: 100;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, #fff0f5, #ffe4e1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      font-size: 1.8em;
+      color: #ff69b4;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 1.1em;
+      color: #333;
+    }
+    .start-btn {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+      animation: pulse 1.5s infinite;
+      transition: transform 0.2s ease;
+    }
+    .start-btn:hover {
+      transform: scale(1.05);
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Música Hub */
+    .music-controls {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 182, 193, 0.9);
+      padding: 12px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      font-size: 1em;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .music-controls button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+    .music-controls input[type="range"] {
+      width: 100px;
+      background: transparent;
+    }
+
+    .song-notif {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 182, 193, 0.95);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      animation: fadeFromTop 3s ease forwards;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @keyframes fadeFromTop {
+      0% { opacity: 0; transform: translate(-50%, -10px); }
+      10% { opacity: 1; transform: translate(-50%, 0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -10px); }
+    }
+
+    /* Hello Kitty de Bicicleta */
+    .kitty-bike {
+      position: fixed;
+      width: 100px;
+      height: auto;
+      z-index: 50;
+      animation: bikeRideTopBottom 20s linear infinite;
+    }
+
+    @keyframes bikeRideTopBottom {
+      /* Passa no topo - da direita para esquerda */
+      0% { 
+        top: 30px; 
+        right: -120px; 
+      }
+      23% { 
+        top: 30px; 
+        right: calc(100% + 120px); 
+      }
+      25% {
+        top: 30px; 
+        right: calc(100% + 120px);
+      }
+      /* Pula para o fundo */
+      26% {
+        top: calc(100% - 130px); 
+        right: calc(100% + 120px);
+      }
+      /* Passa no fundo - da esquerda para direita */
+      49% { 
+        top: calc(100% - 130px); 
+        right: -120px; 
+      }
+      50% {
+        top: calc(100% - 130px); 
+        right: -120px;
+      }
+      /* Pula para o topo */
+      51% {
+        top: 30px; 
+        right: -120px;
+      }
+      /* Passa no topo novamente - da direita para esquerda */
+      74% { 
+        top: 30px; 
+        right: calc(100% + 120px); 
+      }
+      75% {
+        top: 30px; 
+        right: calc(100% + 120px);
+      }
+      /* Pula para o fundo novamente */
+      76% {
+        top: calc(100% - 130px); 
+        right: calc(100% + 120px);
+      }
+      /* Passa no fundo - da esquerda para direita */
+      99% { 
+        top: calc(100% - 130px); 
+        right: -120px; 
+      }
+      100% { 
+        top: 30px; 
+        right: -120px; 
+      }
+    }
+
+    /* Balão de fala da Hello Kitty */
+    .kitty-speech {
+      position: fixed;
+      background: white;
+      color: #ff69b4;
+      padding: 8px 15px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 49;
+      opacity: 0;
+      animation: speechBubble 19.5s linear infinite;
+      white-space: nowrap;
+    }
+
+    .kitty-speech::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid white;
+    }
+
+    @keyframes speechBubble {
+      0% { 
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: calc(100% + 120px);
+      }
+      26% { 
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: calc(100% + 120px);
+      }
+      28% {
+        opacity: 1;
+        top: calc(100% - 180px); 
+        right: calc(100% + 10px);
+      }
+      47% { 
+        opacity: 1;
+        top: calc(100% - 180px); 
+        right: 110px; 
+      }
+      49% {
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: -120px;
+      }
+      75% {
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: calc(100% + 120px);
+      }
+      77% {
+        opacity: 1;
+        top: calc(100% - 180px); 
+        right: calc(100% + 10px);
+      }
+      96% { 
+        opacity: 1;
+        top: calc(100% - 180px); 
+        right: 110px; 
+      }
+      98% {
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: -120px;
+      }
+      100% { 
+        opacity: 0;
+        top: calc(100% - 180px); 
+        right: -120px;
+      }
+    }
+
+    /* Balão "vruuuuum" para parte de cima */
+    .kitty-speech-top {
+      position: fixed;
+      background: white;
+      color: #ff69b4;
+      padding: 8px 15px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 49;
+      opacity: 0;
+      animation: speechBubbleTop 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .kitty-speech-top::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid white;
+    }
+
+    @keyframes speechBubbleTop {
+      0% { 
+        opacity: 0;
+        top: 95px; 
+        right: -120px;
+      }
+      2% {
+        opacity: 1;
+        top: 95px; 
+        right: 50px;
+      }
+      21% { 
+        opacity: 1;
+        top: 95px; 
+        right: calc(100% - 50px); 
+      }
+      23% {
+        opacity: 0;
+        top: 95px; 
+        right: calc(100% + 120px);
+      }
+      50% {
+        opacity: 0;
+        top: 90px; 
+        right: -120px;
+      }
+      52% {
+        opacity: 1;
+        top: 90px; 
+        right: 50px;
+      }
+      71% { 
+        opacity: 1;
+        top: 90px; 
+        right: calc(100% - 50px); 
+      }
+      73% {
+        opacity: 0;
+        top: 90px; 
+        right: calc(100% + 120px);
+      }
+      100% { 
+        opacity: 0;
+        top: 90px; 
+        right: -120px;
+      }
+    }
+
+    /* Pétalas de flores caindo */
+    .petal {
+      position: fixed;
+      top: -50px;
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(ellipse at center, #ffb6c1 0%, #ffc0cb 50%, #ffb6c1 100%);
+      border-radius: 50% 0 50% 0;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes fall {
+      0% {
+        top: -50px;
+        opacity: 0.7;
+      }
+      100% {
+        top: calc(100vh + 50px);
+        opacity: 0;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Pétalas de flores caindo -->
+  <script>
+    // Criar pétalas
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      
+      // Posição horizontal aleatória
+      const startX = Math.random() * window.innerWidth;
+      petal.style.left = startX + 'px';
+      
+      // Tamanho aleatório
+      const size = Math.random() * 10 + 10;
+      petal.style.width = size + 'px';
+      petal.style.height = size + 'px';
+      
+      // Duração da queda aleatória
+      const duration = Math.random() * 10 + 15;
+      petal.style.animation = `fall ${duration}s linear forwards`;
+      
+      // Rotação durante a queda
+      const rotation = Math.random() * 360;
+      petal.style.transform = `rotate(${rotation}deg)`;
+      
+      // Delay aleatório
+      const delay = Math.random() * 5;
+      petal.style.animationDelay = delay + 's';
+      
+      document.body.appendChild(petal);
+      
+      // Remover após a animação
+      setTimeout(() => {
+        petal.remove();
+      }, (duration + delay) * 1000);
+    }
+    
+    // Criar pétalas continuamente
+    setInterval(createPetal, 300);
+    
+    // Criar algumas pétalas iniciais
+    for(let i = 0; i < 15; i++) {
+      setTimeout(createPetal, i * 200);
+    }
+  </script>
+
+  <!-- Hello Kitty de Bicicleta -->
+  <img src="andar.gif" alt="Hello Kitty Bike" class="kitty-bike" />
+  <div class="kitty-speech">o mideuso perdi o controle! ༼ つ ◕_◕ ༽つ</div>
+  <div class="kitty-speech-top">vruuuuum 💨</div>
+  
+  <div class="phone-container">
+    <img src="kitty.png" alt="Hello Kitty Bow" class="kitty-bow" />
+    <div class="phone">
+      <div class="screen" id="homeScreen">
+      <h1>Alexandra ❤️</h1>
+      <p>Lugar especial para alguem especial 😊</p>
+      <button class="start-btn" onclick="clickAndGo('sempre.html')">abra quando estiver curada ou quando achar que ngm mais se importa com vc✨</button>
+      <button class="start-btn" onclick="clickAndGo('textito.html')">Textinho 😚</button>
+      <button class="start-btn" onclick="clickAndGo('galeri.html')">Galeria Pitucha 💖</button>
+      <button class="start-btn" onclick="clickAndGo('jardim.html')">Jardim Virtual 🌸</button>
+      <button class="start-btn" onclick="clickAndGo('cobrita.html')">Joguito pq vc gosta de joguitos</button>
+    </div>
+
+    <!-- Hub de Controle de Música -->
+    <div class="music-controls">
+      <button id="prevBtn">⏮️</button>
+      <button id="playPauseBtn">⏸️</button>
+      <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" />
+      <button id="nextBtn">⏭️</button>
+    </div>
+  </div>
+  </div>
+
+  <!-- Musik -->
+  <audio id="bgMusic" src="inter.mp3" autoplay loop></audio>
+
+  <script>
+    const bgMusic = document.getElementById("bgMusic");
+
+    const songs = [
+      { title: "interestelar main theme 💌", src: "inter2.mp3" }, 
+      
+    ];
+
+    let currentSongIndex = 4;
+
+    // Função de Play/Pause
+    document.getElementById("playPauseBtn").addEventListener("click", function() {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        this.textContent = "⏸️"; // Mostrar pausa
+      } else {
+        bgMusic.pause();
+        this.textContent = "▶️"; // Mostrar play
+      }
+    });
+
+    // Função de próxima música
+    document.getElementById("nextBtn").addEventListener("click", function() {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      bgMusic.src = songs[currentSongIndex].src;
+      bgMusic.play();
+    });
+
+    // Função de música anterior
+    document.getElementById("prevBtn").addEventListener("click", function() {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      bgMusic.src = songs[currentSongIndex].src;
+      bgMusic.play();
+    });
+
+    // Função de controle de volume
+    document.getElementById("volumeControl").addEventListener("input", function() {
+      bgMusic.volume = this.value;
+    });
+
+    function playClickSound() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(880, ctx.currentTime);
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(1320, ctx.currentTime);
+
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start();
+      osc2.start();
+      osc1.stop(ctx.currentTime + 0.2);
+      osc2.stop(ctx.currentTime + 0.2);
+
+      osc1.onended = () => ctx.close();
+    }
+
+    function clickAndGo(url) {
+      playClickSound();
+      setTimeout(() => {
+        window.location.href = url;
+      }, 150);
+    }
+
+    function showSongNotif(text) {
+      const notif = document.createElement("div");
+      notif.className = "song-notif";
+      notif.innerText = `🎵 play song: ${text}`;
+      document.getElementById("homeScreen").appendChild(notif);
+
+      setTimeout(() => {
+        notif.remove();
+      }, 3000);
+    }
+
+    document.getElementById("homeScreen").addEventListener("click", () => {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      bgMusic.src = songs[currentSongIndex].src;
+      bgMusic.play().then(() => {
+        showSongNotif(songs[currentSongIndex].title);
+      }).catch(() => {
+        console.log("Falha ao reproduzir nova música.");
+      });
+    });
+
+    const playMusic = () => {
+      bgMusic.volume = 1.0;
+      bgMusic.play().catch(() => {
+        console.log("A reprodução automática está bloqueada, a música será reproduzida durante a interação.");
+      });
+      document.removeEventListener('click', playMusic);
+    };
+    document.addEventListener('click', playMusic);
+
+  </script>
+</body>
+</html>
