@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jardim Virtual 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #87CEEB, #98D8C8);
+      font-family: 'Quicksand', sans-serif;
+      overflow: hidden;
+      position: relative;
+      height: 100vh;
+    }
+    .sky {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 70%;
+      background: linear-gradient(to bottom, #87CEEB, #B0E0E6);
+      z-index: 1;
+    }
+    .ground {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 30%;
+      background: linear-gradient(to bottom, #8B7355, #6B5344);
+      z-index: 2; cursor: pointer;
+    }
+    .grass {
+      position: absolute;
+      bottom: 30%; left: 0;
+      width: 100%; height: 8%;
+      background: #90EE90;
+      z-index: 3;
+      border-top: 3px solid #228B22;
+      cursor: pointer;
+    }
+    .sun {
+      position: absolute;
+      top: 50px; right: 80px;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, #FFD700, #FFA500);
+      border-radius: 50%;
+      z-index: 1;
+      animation: glow 3s ease-in-out infinite;
+    }
+    @keyframes glow { 0%,100%{box-shadow:0 0 20px #FFD700;} 50%{box-shadow:0 0 40px #FFD700;} }
+    .cloud { position: absolute; background: white; border-radius: 100px; z-index: 1; opacity: .8; }
+    .flower {
+      position: absolute; cursor: pointer; transition: transform .3s ease;
+      z-index: 4; animation: grow 1s ease-out forwards; transform-origin: bottom center;
+    }
+    @keyframes grow { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+    .flower:hover { transform: scale(1.1); }
+
+    .controls {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(255,255,255,.95); padding: 15px 25px; border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.2); z-index: 100;
+      display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center;
+    }
+    .flower-btn {
+      width: 50px; height: 50px; border: 3px solid #fff; border-radius: 50%;
+      cursor: pointer; transition: transform .2s; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+      font-size: 28px; display: flex; align-items: center; justify-content: center;
+    }
+    .flower-btn:hover { transform: scale(1.1); }
+    .flower-btn.selected { border-color:#FFD700; border-width:4px; box-shadow:0 0 15px #FFD700; }
+    .info { color:#ff69b4; font-weight:600; font-size:16px; text-align:center; width:100%; }
+
+    .back-btn {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      padding: 12px 24px; background:#ff69b4; color:white; border:none; border-radius:20px;
+      font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 4px 15px rgba(255,105,180,.4);
+      z-index:100; transition: all .3s;
+    }
+    .back-btn:hover { background:#ff4081; transform: translateX(-50%) scale(1.05); }
+
+    .clear-btn { padding:8px 16px; background:#ff6b6b; color:white; border:none; border-radius:15px; font-size:14px; cursor:pointer; transition:all .3s; }
+    .clear-btn:hover { background:#ff4757; }
+    .counter { background:#ff69b4; color:white; padding:8px 16px; border-radius:15px; font-weight:600; }
+
+    .stats { display:flex; gap:10px; align-items:center; }
+    .stat-box { background:white; padding:6px 12px; border-radius:12px; font-size:13px; color:#333; font-weight:600; }
+    .stat-good { border:2px solid #4CAF50; }
+    .stat-bad  { border:2px solid #ff6b6b; }
+
+    .connection-status {
+      position: fixed; top: 80px; right: 20px; padding: 8px 16px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; z-index: 101; transition: all .3s;
+    }
+    .status-connected { background:#4CAF50; color:white; }
+    .status-disconnected { background:#ff6b6b; color:white; }
+    .status-loading { background:#FFA500; color:white; }
+  </style>
+</head>
+<body>
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div id="connectionStatus" class="connection-status status-loading">Conectando...</div>
+
+  <div class="grass"></div>
+  <div class="ground" id="ground"></div>
+
+  <div class="controls">
+    <div class="info">Clique no chão para plantar flores! Clique nas flores para removê-las 🗑️</div>
+    <div class="flower-btn selected" data-flower="🌸" style="background:#FFB6C1;">🌸</div>
+    <div class="flower-btn" data-flower="🌺" style="background:#FF69B4;">🌺</div>
+    <div class="flower-btn" data-flower="🌻" style="background:#FFD700;">🌻</div>
+    <div class="flower-btn" data-flower="🌷" style="background:#FF1493;">🌷</div>
+    <div class="flower-btn" data-flower="🌹" style="background:#DC143C;">🌹</div>
+    <div class="flower-btn" data-flower="🌼" style="background:#FFFFE0;">🌼</div>
+    <div class="stats">
+      <div class="counter">Flores: <span id="count">0</span></div>
+      <div class="stat-box stat-good">➕ <span id="added">0</span></div>
+      <div class="stat-box stat-bad">➖ <span id="removed">0</span></div>
+    </div>
+    <button class="clear-btn" onclick="clearGarden()">Limpar Jardim</button>
+  </div>
+
+  <button class="back-btn" onclick="window.location.href='backup.html'">🔙 Voltar</button>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <script>
+    // ---- CONFIG FIREBASE (a sua mesma) ----
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9cS4tdhvNE3Wx-JYa5Wfft0TCQLVuMzg",
+      authDomain: "xandalove-2f7f3.firebaseapp.com",
+      databaseURL: "https://xandalove-2f7f3-default-rtdb.firebaseio.com",
+      projectId: "xandalove-2f7f3",
+      storageBucket: "xandalove-2f7f3.firebasestorage.app",
+      messagingSenderId: "172297779195",
+      appId: "1:172297779195:web:833f5ee0c81bffb4cdbd5e"
+    };
+
+    // ---- Estado global ----
+    let database;
+    let isFirebaseReady = false;
+    let hasLoadedFromFirebase = false; // evita carregar duas vezes
+    const statusEl = document.getElementById('connectionStatus');
+
+    let selectedFlower = '🌸';
+    let flowers = [];
+    let stats = { totalAdded: 0, totalRemoved: 0 };
+    let isLoading = true;
+
+    // ---- Inicialização Firebase + detecção de conexão ----
+    try {
+      firebase.initializeApp(firebaseConfig);
+      database = firebase.database();
+
+      database.ref('.info/connected').on('value', (snapshot) => {
+        if (snapshot.val() === true) {
+          isFirebaseReady = true;
+          statusEl.textContent = '🟢 Conectado';
+          statusEl.className = 'connection-status status-connected';
+          console.log('Firebase conectado com sucesso!');
+
+          // Carrega do Firebase apenas uma vez quando conectar
+          if (!hasLoadedFromFirebase) {
+            hasLoadedFromFirebase = true;
+            loadFromFirebase();
+          }
+        } else {
+          isFirebaseReady = false;
+          statusEl.textContent = '🔴 Desconectado';
+          statusEl.className = 'connection-status status-disconnected';
+          console.log('Firebase desconectado');
+        }
+      });
+    } catch (e) {
+      console.error('Erro ao inicializar Firebase:', e);
+      statusEl.textContent = '🔴 Erro Firebase';
+      statusEl.className = 'connection-status status-disconnected';
+      isFirebaseReady = false;
+      // fallback local
+      loadFromCookie();
+      isLoading = false;
+      loadGarden();
+    }
+
+    // ---- UI estática: nuvens e seleção ----
+    function createCloud(left, top, width) {
+      const cloud = document.createElement('div');
+      cloud.className = 'cloud';
+      cloud.style.left = left + '%';
+      cloud.style.top = top + 'px';
+      cloud.style.width = width + 'px';
+      cloud.style.height = (width * 0.6) + 'px';
+      document.querySelector('.sky').appendChild(cloud);
+    }
+    createCloud(10, 80, 100);
+    createCloud(60, 120, 120);
+    createCloud(85, 60, 90);
+
+    document.querySelectorAll('.flower-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.flower-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedFlower = this.dataset.flower;
+      });
+    });
+
+    // ---- Clique: agora no chão e na grama ----
+    const ground = document.getElementById('ground');
+    const grass  = document.querySelector('.grass');
+
+    [ground, grass].forEach(el => {
+      el.addEventListener('click', (e) => {
+        const rect = ground.getBoundingClientRect();
+        const x = e.clientX;
+        // Mantém Y dentro da área do chão para não “subir” demais
+        const y = Math.min(rect.bottom - 5, Math.max(rect.top + 5, e.clientY));
+        plantFlower(x, y);
+      });
+    });
+
+    // ---- CRUD de flores ----
+    function plantFlower(x, y) {
+      console.log('Plantando flor em:', x, y);
+      const size = (30 + Math.random() * 20) + 'px';
+      const flowerData = { type: selectedFlower, x, y, size, id: Date.now().toString() + '-' + Math.random().toString(36).slice(2) };
+      flowers.push(flowerData);
+      stats.totalAdded++;
+      createFlowerElement(flowerData);
+      saveToFirebase();
+      updateStats();
+    }
+
+    function createFlowerElement(flowerData) {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      flower.textContent = flowerData.type;
+      flower.style.fontSize = flowerData.size;
+      flower.style.left = flowerData.x + 'px';
+      flower.style.top  = flowerData.y + 'px';
+      flower.dataset.id = flowerData.id;
+
+      flower.onclick = function(e) {
+        e.stopPropagation();
+        removeFlower(flowerData.id);
+      };
+      document.body.appendChild(flower);
+    }
+
+    function removeFlower(id) {
+      const index = flowers.findIndex(f => f.id === id);
+      if (index > -1) {
+        flowers.splice(index, 1);
+        stats.totalRemoved++;
+
+        if (isFirebaseReady) {
+          database.ref(`garden/flowers/${id}`).remove();
+          database.ref('garden/stats').set(stats);
+        } else {
+          saveToCookie();
+        }
+
+        const el = document.querySelector(`[data-id="${id}"]`);
+        if (el) el.remove();
+        updateStats();
+      }
+    }
+
+    function clearGarden() {
+      if (confirm('Tem certeza que quer limpar todo o jardim? Isso não afetará as estatísticas.')) {
+        if (isFirebaseReady) {
+          database.ref('garden/flowers').remove();
+        }
+        document.querySelectorAll('.flower').forEach(f => f.remove());
+        flowers = [];
+        saveToFirebase();
+        updateStats();
+      }
+    }
+
+    // ---- Persistência ----
+    function loadFromFirebase() {
+      if (!isFirebaseReady) {
+        console.log('Firebase não pronto, usando cookies');
+        loadFromCookie();
+        isLoading = false;
+        loadGarden();
+        return;
+      }
+
+      console.log('Carregando do Firebase...');
+      const flowersRef = database.ref('garden/flowers');
+      const statsRef   = database.ref('garden/stats');
+
+      flowersRef.once('value').then((snapshot) => {
+        const data = snapshot.val();
+        flowers = data ? Object.values(data) : [];
+        return statsRef.once('value');
+      }).then((snapshot) => {
+        const data = snapshot.val();
+        if (data) stats = data;
+        isLoading = false;
+        loadGarden();
+        listenToChanges();
+        console.log('Jardim carregado com sucesso!');
+      }).catch((error) => {
+        console.error('Erro ao carregar do Firebase:', error);
+        loadFromCookie();
+        isLoading = false;
+        loadGarden();
+      });
+    }
+
+    function listenToChanges() {
+      if (!isFirebaseReady) return;
+
+      database.ref('garden/flowers').on('value', (snapshot) => {
+        if (isLoading) return;
+        const data = snapshot.val();
+        const newFlowers = data ? Object.values(data) : [];
+
+        // remove os que sumiram
+        document.querySelectorAll('.flower').forEach(el => {
+          const id = el.dataset.id;
+          if (!newFlowers.find(f => f.id == id)) el.remove();
+        });
+        // adiciona os novos
+        newFlowers.forEach(f => {
+          if (!document.querySelector(`[data-id="${f.id}"]`)) createFlowerElement(f);
+        });
+
+        flowers = newFlowers;
+        updateStats();
+      });
+
+      database.ref('garden/stats').on('value', (snapshot) => {
+        if (isLoading) return;
+        const data = snapshot.val();
+        if (data) { stats = data; updateStats(); }
+      });
+    }
+
+    function saveToFirebase() {
+      if (!isFirebaseReady) {
+        console.log('Firebase não pronto, salvando em cookies');
+        saveToCookie();
+        return;
+      }
+      console.log('Salvando no Firebase...');
+      const updates = {};
+      flowers.forEach(f => { updates[`garden/flowers/${f.id}`] = f; });
+      updates['garden/stats'] = stats;
+
+      database.ref().update(updates)
+        .then(() => console.log('Salvo com sucesso!'))
+        .catch((error) => { console.error('Erro ao salvar:', error); saveToCookie(); });
+    }
+
+    // ---- Cookies (fallback offline) ----
+    function loadFromCookie() {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'gardenData') {
+          try {
+            const data = JSON.parse(decodeURIComponent(value));
+            flowers = data.flowers || [];
+            stats = data.stats || { totalAdded: 0, totalRemoved: 0 };
+            return true;
+          } catch (e) { console.log('Erro ao carregar dados do cookie'); }
+        }
+      }
+      return false;
+    }
+
+    function saveToCookie() {
+      const data = { flowers, stats };
+      const expires = new Date(); expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `gardenData=${encodeURIComponent(JSON.stringify(data))}; expires=${expires.toUTCString()}; path=/`;
+    }
+
+    // ---- Render/estado ----
+    function loadGarden() {
+      // limpa DOM antes de recriar (evita duplicatas em recarregamentos)
+      document.querySelectorAll('.flower').forEach(f => f.remove());
+      flowers.forEach(f => createFlowerElement(f));
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('count').textContent   = flowers.length;
+      document.getElementById('added').textContent   = stats.totalAdded;
+      document.getElementById('removed').textContent = stats.totalRemoved;
+    }
+
+    // chamada inicial (se já estiver online, carrega; se não, cairá no cookie)
+    loadFromFirebase();
+  </script>
+</body>
+</html>
